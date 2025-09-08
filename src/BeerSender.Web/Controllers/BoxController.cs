@@ -1,5 +1,7 @@
 using BeerSender.Domain;
+using BeerSender.Domain.Boxes;
 using BeerSender.Domain.Boxes.Commands;
+using Marten;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BeerSender.Web.Controllers;
@@ -8,6 +10,23 @@ namespace BeerSender.Web.Controllers;
 [Route("api/command/[controller]")]
 public class BoxController(CommandRouter router) : ControllerBase
 {
+    
+    [HttpGet]
+    public async Task<IActionResult> CreateBox(
+        [FromRoute]Guid id,
+        [FromQuery]long? version,
+        [FromServices] IDocumentStore store)
+    {
+        await using var session = store.QuerySession();
+
+        var box = await session.Events.AggregateStreamAsync<Box>(id, version: version ?? 0L);
+        
+        if (box == null)
+            return NotFound();
+        
+        return Ok(box);
+    }
+    
     [HttpPost]
     [Route("create")]
     [ProducesResponseType(StatusCodes.Status202Accepted)]

@@ -13,7 +13,6 @@ builder.AddServiceDefaults();
 builder.Services.AddProblemDetails();
 
 
-
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
@@ -26,10 +25,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.RegisterDomain();
 
 builder.AddNpgsqlDataSource("marten-db");
-builder.Services.AddMarten(opt =>
-{
-    opt.DatabaseSchemaName = "beersender";
-}).UseNpgsqlDataSource();
+builder.Services
+    .AddMarten(opt =>
+    {
+        opt.DatabaseSchemaName = "beersender";
+        opt.ApplyDomainConfig();
+        opt.AddProjections();
+    })
+    .AddAsyncDaemon(DaemonMode.Solo)
+    .UseNpgsqlDataSource();
 
 var app = builder.Build();
 
@@ -55,7 +59,7 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseStaticFiles();
 app.MapRazorPages();
-    
+
 app.MapHub<EventHub>("event-hub");
 
 app.Run();

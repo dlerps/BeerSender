@@ -12,21 +12,22 @@ public class Box
     {
         return new Box()
         {
-            BoxType = created.Capacity
+            BoxType = created.Capacity,
+            Id = created.BoxId
         };
     }
     
-    public void Apply(BottlesUpdated @event)
+    public void Apply(BottlesAdded @event)
     {
-        Bottles = @event.Bottles.ToList();
+        Bottles.AddRange(@event.Bottles);
     }
     
-    public bool IsFull()
+    public bool HasSpace(int requestedSpots)
     {
         if (BoxType is null)
             throw new InvalidOperationException("Box type must be set before checking if full.");
 
-        return Bottles.Count >= BoxType.NumberOfSpots;
+        return Bottles.Count + requestedSpots > BoxType.NumberOfSpots;
     }
 }
 

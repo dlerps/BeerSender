@@ -1,10 +1,5 @@
-using BeerSender.Domain.Boxes;
 using BeerSender.Domain.Boxes.Commands;
-using BeerSender.Domain.JsonConfiguration;
-using JasperFx.Events.Projections;
 using Marten;
-using Marten.Events.Projections;
-using Marten.Services.Json.Transformations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BeerSender.Domain;

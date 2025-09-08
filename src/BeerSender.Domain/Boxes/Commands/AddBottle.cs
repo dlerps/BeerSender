@@ -3,7 +3,7 @@ using Marten;
 
 namespace BeerSender.Domain.Boxes.Commands;
 
-public record AddBottle(Guid BoxId, string BeerBrand)
+public record AddBottle(Guid BoxId, string BeerBrand, short Quantity = 1)
     : ICommand;
 
 public class AddBottleHandler : AbstractCommandHandler<AddBottle>
@@ -15,9 +15,14 @@ public class AddBottleHandler : AbstractCommandHandler<AddBottle>
 
         if (box is null)
             return;
-        if (box.IsFull())
+        if (box.HasSpace(command.Quantity))
             return;
         
-        stream.AppendOne(new BottlesUpdated([..box.Bottles, command.BeerBrand]));
+        stream.AppendOne(new BottlesAdded(
+            Enumerable
+                .Range(0, command.Quantity)
+                .Select(_ => command.BeerBrand)
+                .ToArray())
+        );
     }
 }

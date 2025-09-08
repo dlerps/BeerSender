@@ -1,6 +1,6 @@
 ﻿namespace BeerSender.Domain.Boxes.Events;
 
-public record BoxCreated(BoxCapacity Capacity);
+public record BoxCreated(Guid BoxId, BoxCapacity Capacity);
 
 public record ShippingLabelAdded(ShippingLabel Label);
 
@@ -13,4 +13,4 @@ public record FailedToAddShippingLabel(FailedToAddShippingLabel.FailReason Reaso
     }
 }
 
-public record BottlesUpdated(string[] Bottles);
+public record BottlesAdded(string[] Bottles);

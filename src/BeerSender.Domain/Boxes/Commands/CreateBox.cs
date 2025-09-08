@@ -13,7 +13,7 @@ public class CreateBoxHandler : AbstractCommandHandler<CreateBox>
     public override Task Handle(IDocumentSession session, CreateBox command)
     {
         var capacity = BoxCapacity.Create(command.DesiredNumberOfSpots);
-        var @event = new BoxCreated(capacity);
+        var @event = new BoxCreated(command.BoxId, capacity);
         session.Events.StartStream<Box>(command.BoxId, @event);
         
         return Task.CompletedTask;
