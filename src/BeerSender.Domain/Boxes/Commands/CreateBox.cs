@@ -1,3 +1,4 @@
+using BeerSender.Domain.Boxes.Events;
 using Marten;
 
 namespace BeerSender.Domain.Boxes.Commands;
@@ -7,11 +8,14 @@ public record CreateBox(
     int DesiredNumberOfSpots
 ) : ICommand;
 
-public class CreateBoxHandler
-    : AbstractCommandHandler<CreateBox>
+public class CreateBoxHandler : AbstractCommandHandler<CreateBox>
 {
     public override Task Handle(IDocumentSession session, CreateBox command)
     {
-        throw new NotImplementedException();
+        var capacity = BoxCapacity.Create(command.DesiredNumberOfSpots);
+        var @event = new BoxCreated(capacity);
+        session.Events.StartStream<Box>(command.BoxId, @event);
+        
+        return Task.CompletedTask;
     }
 }

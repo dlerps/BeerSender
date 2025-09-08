@@ -1,10 +1,11 @@
 using Marten;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BeerSender.Domain;
 
 public class CommandRouter(
-    IServiceProvider serviceProvider)
+    IServiceProvider serviceProvider, IDocumentStore store)
 {
     public async Task HandleCommand(ICommand command)
     {
@@ -13,6 +14,11 @@ public class CommandRouter(
         var handler = serviceProvider.GetService(handlerType) as ICommandHandler;
         var methodInfo = handlerType.GetMethod("Handle");
 
-        // TODO
+        var session = store.IdentitySession();
+        
+        var handleTask = (Task)methodInfo.Invoke(handler, [session, command] );
+        await handleTask;
+        
+        await session.SaveChangesAsync();
     }
 }
