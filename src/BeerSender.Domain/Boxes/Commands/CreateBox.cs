@@ -8,10 +8,10 @@ public record CreateBox(
 ) : ICommand;
 
 public class CreateBoxHandler
-    : ICommandHandler<CreateBox>
+    : AbstractCommandHandler<CreateBox>
 {
-    public async Task Handle(IDocumentSession session, CreateBox command)
+    public override Task Handle(IDocumentSession session, CreateBox command)
     {
-        // TO DO
+        throw new NotImplementedException();
     }
 }

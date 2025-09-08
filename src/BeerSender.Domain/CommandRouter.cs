@@ -10,7 +10,7 @@ public class CommandRouter(
     {
         var commandType = command.GetType();
         var handlerType = typeof(ICommandHandler<>).MakeGenericType(commandType);
-        var handler = serviceProvider.GetService(handlerType);
+        var handler = serviceProvider.GetService(handlerType) as ICommandHandler;
         var methodInfo = handlerType.GetMethod("Handle");
 
         // TODO
