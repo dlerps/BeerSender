@@ -6,6 +6,7 @@ public class Box
 {
     public Guid Id { get; set; }
     public BoxCapacity? BoxType { get; set; }
+    public List<string> Bottles { get; set; } = new();
 
     public static Box Create(BoxCreated created)
     {
@@ -13,6 +14,19 @@ public class Box
         {
             BoxType = created.Capacity
         };
+    }
+    
+    public void Apply(BottlesUpdated @event)
+    {
+        Bottles = @event.Bottles.ToList();
+    }
+    
+    public bool IsFull()
+    {
+        if (BoxType is null)
+            throw new InvalidOperationException("Box type must be set before checking if full.");
+
+        return Bottles.Count >= BoxType.NumberOfSpots;
     }
 }
 

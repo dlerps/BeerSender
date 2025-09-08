@@ -12,3 +12,5 @@ public record FailedToAddShippingLabel(FailedToAddShippingLabel.FailReason Reaso
         InvalidShippingLabel
     }
 }
+
+public record BottlesUpdated(string[] Bottles);

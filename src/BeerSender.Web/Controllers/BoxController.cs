@@ -18,15 +18,18 @@ public class BoxController(CommandRouter router) : ControllerBase
         return Accepted();
     }
     
-    // [HttpPost]
-    // [Route("add-bottle")]
-    // [ProducesResponseType(StatusCodes.Status202Accepted)]
-    // public async Task<IActionResult> AddBottle([FromBody]AddBeerBottle command)
-    // {
-    //     await router.HandleCommand(command);
-    //     return Accepted();
-    // }
-    //
+    [HttpPost]
+    [Route("add-bottle")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> AddBottle([FromBody]AddBottle command)
+    {
+        if (String.IsNullOrEmpty(command.BeerBrand))
+            return BadRequest("BeerBrand is required");
+        
+        await router.HandleCommand(command);
+        return Accepted();
+    }
+    
     [HttpPost]
     [Route("add-label")]
     [ProducesResponseType(StatusCodes.Status202Accepted)]

@@ -13,11 +13,13 @@ public class CommandRouter(
         var handlerType = typeof(ICommandHandler<>).MakeGenericType(commandType);
         var handler = serviceProvider.GetService(handlerType) as ICommandHandler;
         var methodInfo = handlerType.GetMethod("Handle");
+        
+        if (handler is null)
+            throw new InvalidOperationException($"No handler found for command type {commandType.Name}");
 
         var session = store.IdentitySession();
-        
-        var handleTask = (Task)methodInfo.Invoke(handler, [session, command] );
-        await handleTask;
+
+        await handler.Handle(session, command);
         
         await session.SaveChangesAsync();
     }
