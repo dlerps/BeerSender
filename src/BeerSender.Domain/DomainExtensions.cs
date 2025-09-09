@@ -1,4 +1,6 @@
+using BeerSender.Domain.Boxes;
 using BeerSender.Domain.Boxes.Commands;
+using JasperFx.Events.Projections;
 using Marten;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,6 +24,6 @@ public static class DomainExtensions
     
     public static void AddProjections(this StoreOptions options)
     {
-        
+        options.Projections.Add<BoxContentProjection>(ProjectionLifecycle.Async);
     }
 }
