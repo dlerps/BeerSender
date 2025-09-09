@@ -10,9 +10,8 @@ namespace BeerSender.Web.Controllers;
 [Route("api/command/[controller]")]
 public class BoxController(CommandRouter router) : ControllerBase
 {
-    
-    [HttpGet]
-    public async Task<IActionResult> CreateBox(
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetBox(
         [FromRoute]Guid id,
         [FromQuery]long? version,
         [FromServices] IDocumentStore store)
@@ -21,7 +20,24 @@ public class BoxController(CommandRouter router) : ControllerBase
 
         var box = await session.Events.AggregateStreamAsync<Box>(id, version: version ?? 0L);
         
-        if (box == null)
+        if (box is null)
+            return NotFound();
+        
+        return Ok(box);
+    }
+    
+    [HttpGet("{id}/content")]
+    public async Task<IActionResult> GetBoxBrands(
+        [FromRoute]Guid id,
+        [FromServices] IDocumentStore store)
+    {
+        await using var session = store.QuerySession();
+
+        var box = await session
+            .Query<BoxContent>()
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (box is null)
             return NotFound();
         
         return Ok(box);
